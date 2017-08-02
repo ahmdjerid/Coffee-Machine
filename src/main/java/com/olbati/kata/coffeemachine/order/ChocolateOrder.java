@@ -11,12 +11,8 @@ import java.math.BigDecimal;
 public class ChocolateOrder extends Order {
 
 
-    public ChocolateOrder(int sugarQuantity, BigDecimal amountMoney) {
-        super(sugarQuantity, amountMoney);
-    }
-
-    public ChocolateOrder(int sugarQuantity) {
-        super(sugarQuantity);
+    public ChocolateOrder(int sugarQuantity, BigDecimal amountMoney, Boolean isExtraHot) {
+        super(sugarQuantity, amountMoney, isExtraHot);
     }
 
     @Override

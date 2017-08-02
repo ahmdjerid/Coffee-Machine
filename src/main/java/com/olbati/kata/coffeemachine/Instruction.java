@@ -9,11 +9,14 @@ public class Instruction {
     private final DrinkType type;
     private final int sugarQuantity;
     private final boolean withStick;
+    private final boolean isExtraHot;
 
-    public Instruction(DrinkType type, int sugarQuantity, boolean withStick) {
+
+    public Instruction(DrinkType type, int sugarQuantity, boolean withStick, boolean isExtraHot) {
         this.type = type;
         this.sugarQuantity = sugarQuantity;
         this.withStick = withStick;
+        this.isExtraHot = isExtraHot;
     }
 
     public DrinkType getType() {
@@ -24,13 +27,19 @@ public class Instruction {
         return sugarQuantity;
     }
 
+    public boolean isExtraHot()
+    {
+        return this.isExtraHot;
+    }
+
     public boolean isWithStick() {
         return withStick;
     }
 
     @Override
     public String toString() {
-        return type.getCode() + sugarQuantity + (withStick ? "0" : "");
+        return type.getCode() + (isExtraHot ? "h" : "")
+                + sugarQuantity + (withStick ? "0" : "");
     }
 
 }

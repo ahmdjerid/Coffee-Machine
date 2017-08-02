@@ -10,18 +10,18 @@ import java.math.BigDecimal;
  */
 public class TeaOrder extends Order {
 
-    public TeaOrder(int sugarQuantity, BigDecimal amountMoney) {
-        super(sugarQuantity, amountMoney);
-    }
 
-    public TeaOrder(int sugarQuantity) {
-        super(sugarQuantity);
+    public TeaOrder(int sugarQuantity, BigDecimal amountMoney, Boolean isExtraHot) {
+        super(sugarQuantity, amountMoney, isExtraHot);
     }
 
     @Override
     public DrinkType getDrinkType() {
         return DrinkType.TEA;
     }
+
+
+
 
 
 }

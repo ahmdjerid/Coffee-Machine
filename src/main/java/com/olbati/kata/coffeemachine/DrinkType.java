@@ -10,7 +10,8 @@ public enum DrinkType {
 
     COFFEE('C', new BigDecimal(0.6)),
     TEA('T', new BigDecimal(0.4)),
-    CHOCOLATE('H', new BigDecimal(0.5));
+    CHOCOLATE('H', new BigDecimal(0.5)),
+    ORANGE('O', new BigDecimal(0.6));
 
     private char code;
     private BigDecimal price;

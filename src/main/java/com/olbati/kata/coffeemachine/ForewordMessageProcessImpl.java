@@ -1,4 +1,4 @@
-package com.olbati.kata.coffeemachine.order;
+package com.olbati.kata.coffeemachine;
 
 import com.olbati.kata.coffeemachine.ForewordMessageProcess;
 

@@ -12,12 +12,11 @@ public abstract class Order {
 
     private final int sugarQuantity;
     private BigDecimal amountMoney = BigDecimal.ZERO;
+    private Boolean isExtraHot;
 
-    public Order(int sugarQuantity) {
-        this.sugarQuantity = sugarQuantity;
-    }
 
-    public Order(int sugarQuantity, BigDecimal amountMoney) {
+    public Order(int sugarQuantity, BigDecimal amountMoney, Boolean isExtraHot) {
+        this.isExtraHot = isExtraHot;
         this.amountMoney = amountMoney;
         this.sugarQuantity = sugarQuantity;
     }
@@ -28,7 +27,12 @@ public abstract class Order {
         return sugarQuantity;
     }
 
+    public Boolean isExtraHot() {
+        return isExtraHot;
+    }
+
     public BigDecimal getAmountMoney() {
         return amountMoney;
     }
+
 }
