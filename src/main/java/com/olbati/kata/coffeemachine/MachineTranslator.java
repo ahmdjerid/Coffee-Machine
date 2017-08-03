@@ -1,6 +1,7 @@
 package com.olbati.kata.coffeemachine;
 
 import com.olbati.kata.coffeemachine.order.Order;
+import com.olbati.kata.coffeemachine.products.IProduct;
 
 import java.math.BigDecimal;
 
@@ -13,27 +14,45 @@ public class MachineTranslator {
 
     private ForewordMessageProcess forewordMessageProcess = new ForewordMessageProcessImpl();
 
-    public Instruction translate(Order order) {
-        Instruction instruction = null;
-        if (isEnoughMoney(order.getAmountMoney(), order.getDrinkType().getPrice())) {
-            Boolean extraHot = order.isExtraHot();
-            DrinkType drinkType = order.getDrinkType();
-            int sugarQuantity = order.getSugarQuantity();
-            boolean stickCode = order.getSugarQuantity() > 0;
-            instruction = new Instruction(drinkType, sugarQuantity, stickCode, extraHot);
+    public String command(Order order) {
+
+        if (isEnoughMoney(order)) {
+            return getInstruction(order.product, order.getSugarQuantity());
 
         } else {
-            String missingMoney = order.getAmountMoney().
-                    subtract(order.getDrinkType().getPrice())
-                    .abs().setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+            String missingMoney = order
+                    .getAmountMoney()
+                    .subtract(order.product.getPrice())
+                    .abs().setScale(2, BigDecimal.ROUND_HALF_UP)
+                    .toString();
+
             sendMessage("Money is not enough, missing on euro , " + missingMoney);
 
+            return "";
         }
-        return instruction;
+
     }
 
+    public String getInstruction(IProduct product, int sugarQuantity) {
+        String sugarCode;
+        switch (sugarQuantity) {
+            case 0:
+                sugarCode = "::";
+                break;
+            case 1:
+                sugarCode = ":1:0";
+                break;
+            default:
+                sugarCode = ":2:0";
+        }
 
-    private boolean isEnoughMoney(BigDecimal amountMoney, BigDecimal price) {
+        return product.getCode() + sugarCode;
+    }
+
+    private boolean isEnoughMoney(Order order) {
+        BigDecimal amountMoney = order.amountMoney;
+        BigDecimal price = order.product.getPrice();
+
         return amountMoney.compareTo(price) == 1 || amountMoney.compareTo(price) == 0;
     }
 

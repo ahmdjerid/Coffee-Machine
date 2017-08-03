@@ -1,7 +1,12 @@
 package com.olbati.kata.coffeemachine;
 
 
-import com.olbati.kata.coffeemachine.order.*;
+import com.olbati.kata.coffeemachine.order.Order;
+import com.olbati.kata.coffeemachine.products.Chocolate;
+import com.olbati.kata.coffeemachine.products.Coffee;
+import com.olbati.kata.coffeemachine.products.Orange;
+import com.olbati.kata.coffeemachine.products.Tea;
+import com.olbati.kata.coffeemachine.products.decorators.HotDecorator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -30,13 +35,13 @@ public class MachineTranslatorTest {
         //given
 
         //when
-        Order order = new TeaOrder(0, new BigDecimal(1), false);
+        Order order = new Order(0, new BigDecimal(1), new Tea());
 
-        Instruction instruction = machineTranslator.translate(order);
+        String instruction = machineTranslator.command(order);
 
         //then
-        assertThat(instruction).isNotNull();
-        assertThat(instruction.getType()).isEqualTo(DrinkType.TEA);
+        assertThat(instruction).isEqualTo("T::");
+
     }
 
     @Test
@@ -44,12 +49,12 @@ public class MachineTranslatorTest {
         //given
 
         //when
-        Order order = new CoffeeOrder(0, new BigDecimal(1), false);
-        Instruction instruction = (Instruction) machineTranslator.translate(order);
+        Order order = new Order(0, new BigDecimal(1), new Coffee());
+        String instruction = machineTranslator.command(order);
 
         //then
-        assertThat(instruction).isNotNull();
-        assertThat(instruction.getType()).isEqualTo(DrinkType.COFFEE);
+        assertThat(instruction).isEqualTo("C::");
+
     }
 
     @Test
@@ -57,26 +62,24 @@ public class MachineTranslatorTest {
         //given
 
         //when
-        Order order = new ChocolateOrder(0, new BigDecimal(1), false);
-        Instruction instruction = machineTranslator.translate(order);
+        Order order = new Order(0, new BigDecimal(1), new Chocolate());
+        String instruction = machineTranslator.command(order);
 
         //then
-        assertThat(instruction).isNotNull();
-        assertThat(instruction.getType()).isEqualTo(DrinkType.CHOCOLATE);
+        assertThat(instruction).isEqualTo("H::");
+
     }
 
     @Test
-    public void should_return__instruction_of_chocolate_with_one_sugar_when_order_is_chocolate_with_one_sugar() {
+    public void should_return_instruction_when_order_is_chocolate_with_one_sugar() {
         //given
 
         //when
-        Order order = new ChocolateOrder(1, new BigDecimal(1), false);
-        Instruction instruction = (Instruction) machineTranslator.translate(order);
+        Order order = new Order(1, new BigDecimal(1), new Chocolate());
+        String instruction = machineTranslator.command(order);
 
         //then
-        assertThat(instruction).isNotNull();
-        assertThat(instruction.getType()).isEqualTo(DrinkType.CHOCOLATE);
-        assertThat(instruction.getSugarQuantity()).isEqualTo(1);
+        assertThat(instruction).isEqualTo("H:1:0");
     }
 
     @Test
@@ -84,14 +87,11 @@ public class MachineTranslatorTest {
         //given
 
         //when
-        Order order = new CoffeeOrder(2, new BigDecimal(1), false);
-        Instruction instruction = machineTranslator.translate(order);
+        Order order = new Order(2, new BigDecimal(1), new Coffee());
+        String instruction = machineTranslator.command(order);
 
         //then
-        assertThat(instruction).isNotNull();
-        assertThat(instruction.getType()).isEqualTo(DrinkType.COFFEE);
-        assertThat(instruction.getSugarQuantity()).isEqualTo(2);
-        assertThat(instruction.isWithStick()).isTrue();
+        assertThat(instruction).isEqualTo("C:2:0");
 
     }
 
@@ -114,51 +114,53 @@ public class MachineTranslatorTest {
     public void should_return_tea_instruction_only_if_money_enough() {
 
         //given
-        Order order = new TeaOrder(1, BigDecimal.valueOf(1), true);
+        Order order = new Order(1, BigDecimal.valueOf(1), new Tea());
 
         //when
-        Instruction instruction = machineTranslator.translate(order);
+        String instruction = machineTranslator.command(order);
 
         //then
-        assertThat(instruction).isNotNull();
-        assertThat(instruction.getType()).isEqualTo(DrinkType.TEA);
+        assertThat(instruction).isEqualTo("T:1:0");
+
+
     }
 
     @Test
     public void should_return_coffee_instruction_if_money_enough() {
 
         //given
-        Order order = new CoffeeOrder(1, new BigDecimal(1), false);
+        Order order = new Order(1, new BigDecimal(1), new Coffee());
 
         //when
-        Instruction instruction = machineTranslator.translate(order);
+        String instruction = machineTranslator.command(order);
 
         //then
-        assertThat(instruction).isNotNull();
-        assertThat(instruction.getType()).isEqualTo(DrinkType.COFFEE);
+        assertThat(instruction).isEqualTo("C:1:0");
+
+
     }
 
     @Test
     public void should_return_tea_instruction_if_money_enough_when_tea_order() {
 
         //given
-        Order order = new TeaOrder(1, new BigDecimal(0.4), true);
+        Order order = new Order(1, new BigDecimal(0.4), new Tea());
 
         //when
-        Instruction instruction = machineTranslator.translate(order);
+        String instruction = machineTranslator.command(order);
 
         //then
-        assertThat(instruction).isNotNull();
-        assertThat(instruction.getType()).isEqualTo(DrinkType.TEA);
+        assertThat(instruction).isEqualTo("T:1:0");
+
     }
 
     @Test
     public void should_send_message_instruction_if_money_not_enough_for_order_coffee() {
 
         //given
-        Order order = new CoffeeOrder(1, new BigDecimal(0.1), false);
+        Order order = new Order(1, new BigDecimal(0.1), new Coffee());
         //when
-        machineTranslator.translate(order);
+        machineTranslator.command(order);
         //then
 
         verify(forewordMessageProcess, times(1)).sendsMsg(anyString());
@@ -169,58 +171,42 @@ public class MachineTranslatorTest {
     public void should_send_message_contains_a_missing_amount_when_not_enough_money_for_order_coffee() {
         //given
         String msg = "Money is not enough, missing on euro , 0.50";
-        Order order = new CoffeeOrder(1, new BigDecimal(0.1), true);
+        Order order = new Order(1, new BigDecimal(0.1), new Coffee());
         //when
-        machineTranslator.translate(order);
+        machineTranslator.command(order);
         //then
 
         verify(forewordMessageProcess, times(1)).sendsMsg(msg);
 
-        // assertThat()
     }
 
     @Test
     public void should_return_orange_instruction_when_order_is_orange() {
         //given
 
-        Order orangeOrder = new OrangeOrder(0, new BigDecimal(1), true);
+        Order orangeOrder = new Order(0, new BigDecimal(1), new Orange());
         //when
-        Instruction instruction = machineTranslator.translate(orangeOrder);
+        String instruction = machineTranslator.command(orangeOrder);
         //then
-        assertThat(instruction).isNotNull();
-        assertThat(instruction.getType()).isEqualTo(DrinkType.ORANGE);
+        assertThat(instruction).isEqualTo("O::");
+
 
     }
 
     @Test
     public void should_return_extra_hot_coffee_instruction_when_order_is_extra_hot_coffee() {
         //given
-        Order CoffeeOrder = new CoffeeOrder(0, new BigDecimal(1), true);
+        Coffee coffee = new Coffee();
+        HotDecorator hotCoffee = new HotDecorator(coffee);
+
+        Order CoffeeOrder = new Order(0, new BigDecimal(1), hotCoffee);
         //when
-        Instruction instruction = machineTranslator.translate(CoffeeOrder);
+        String instruction = machineTranslator.command(CoffeeOrder);
 
         //then
-        assertThat(instruction).isNotNull();
-        assertThat(instruction.getType()).isEqualTo(DrinkType.COFFEE);
-        assertThat(instruction.isExtraHot()).isTrue();
+        assertThat(instruction).isEqualTo("Ch::");
 
     }
-
-    @Test
-    public void should_return_fresh_orange_instruction_when_order_is_extra_hot_orange() {
-        //given
-        Order orangeOrder = new OrangeOrder(0, new BigDecimal(1), true);
-        //when
-        Instruction instruction = machineTranslator.translate(orangeOrder);
-
-        //then
-        assertThat(instruction).isNotNull();
-        assertThat(instruction.getType()).isEqualTo(DrinkType.ORANGE);
-        assertThat(instruction.isExtraHot()).isFalse();
-
-    }
-
-
 
 
 }

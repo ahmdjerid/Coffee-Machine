@@ -1,6 +1,6 @@
 package com.olbati.kata.coffeemachine.order;
 
-import com.olbati.kata.coffeemachine.DrinkType;
+import com.olbati.kata.coffeemachine.products.IProduct;
 
 import java.math.BigDecimal;
 
@@ -8,27 +8,22 @@ import java.math.BigDecimal;
  * @author Ahmed Jerid <ahmed.jerid@olbati.com>
  *         Date: 01/08/2017
  */
-public abstract class Order {
+public class Order {
 
-    private final int sugarQuantity;
-    private BigDecimal amountMoney = BigDecimal.ZERO;
-    private Boolean isExtraHot;
+    public final IProduct product;
+    final int sugarQuantity;
+    public final BigDecimal amountMoney;
 
 
-    public Order(int sugarQuantity, BigDecimal amountMoney, Boolean isExtraHot) {
-        this.isExtraHot = isExtraHot;
+    public Order(int sugarQuantity, BigDecimal amountMoney, IProduct product) {
         this.amountMoney = amountMoney;
         this.sugarQuantity = sugarQuantity;
+        this.product = product;
     }
 
-    public abstract DrinkType getDrinkType();
 
     public int getSugarQuantity() {
         return sugarQuantity;
-    }
-
-    public Boolean isExtraHot() {
-        return isExtraHot;
     }
 
     public BigDecimal getAmountMoney() {
