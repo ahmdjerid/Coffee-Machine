@@ -15,15 +15,27 @@ public class MachineTranslator {
     private IOrderRepository orderRepository;
 
     private ForewordMessageProcess forewordMessageProcess;
+    private BeverageQuantityChecker beverageQuantityChecker;
+    private EmailNotifier emailNotifier;
 
 
-
-    public MachineTranslator(IOrderRepository orderRepository, ForewordMessageProcess forewordMessageProcess) {
+    public MachineTranslator(IOrderRepository orderRepository,
+                             ForewordMessageProcess forewordMessageProcess,
+                             BeverageQuantityChecker beverageQuantityChecker,
+                             EmailNotifier emailNotifier) {
         this.orderRepository = orderRepository;
         this.forewordMessageProcess = forewordMessageProcess;
+        this.beverageQuantityChecker = beverageQuantityChecker;
+        this.emailNotifier = emailNotifier;
     }
 
     public String command(Order order) {
+
+        if (beverageQuantityChecker.isEmpty(order.product.getIdentifier())) {
+            emailNotifier.notifyMissingDrink(order.product.getIdentifier());
+            forewordMessageProcess.sendsMsg(" A drink can't be delivered because of a shortage ");
+            return "";
+        }
 
         if (isEnoughMoney(order)) {
             orderRepository.save(order);
@@ -65,7 +77,6 @@ public class MachineTranslator {
 
         return amountMoney.compareTo(price) == 1 || amountMoney.compareTo(price) == 0;
     }
-
 
 
     public String sendMessage(String msg) {

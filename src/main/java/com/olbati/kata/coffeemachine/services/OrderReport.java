@@ -51,8 +51,8 @@ public class OrderReport implements IOrderReport {
 
         List<IProduct> productTypes = orderRepository.findProductTypes();
 
-        productTypes.forEach(type -> {
-            reportDetails.add(getReportDetails(type));
+        productTypes.forEach(productType -> {
+            reportDetails.add(getReportDetails(productType));
         });
         return reportDetails;
 

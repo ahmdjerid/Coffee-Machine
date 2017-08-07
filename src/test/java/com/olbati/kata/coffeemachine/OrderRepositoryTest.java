@@ -85,5 +85,15 @@ public class OrderRepositoryTest {
         assertThat(listOrders).hasSize(2);
     }
 
+    @Test
+    public void should_notifer_by_email_and_message_when_() {
+    //given
+
+    //when
+
+    //then
+
+    }
+
 
 }

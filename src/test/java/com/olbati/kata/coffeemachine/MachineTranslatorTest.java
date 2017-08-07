@@ -8,6 +8,8 @@ import com.olbati.kata.coffeemachine.dom.products.Coffee;
 import com.olbati.kata.coffeemachine.dom.products.Orange;
 import com.olbati.kata.coffeemachine.dom.products.Tea;
 import com.olbati.kata.coffeemachine.dom.products.decorators.HotDecorator;
+import com.olbati.kata.coffeemachine.services.BeverageQuantityChecker;
+import com.olbati.kata.coffeemachine.services.EmailNotifier;
 import com.olbati.kata.coffeemachine.services.ForewordMessageProcess;
 import com.olbati.kata.coffeemachine.services.MachineTranslator;
 import org.junit.Test;
@@ -35,6 +37,11 @@ public class MachineTranslatorTest {
     private ForewordMessageProcess forewordMessageProcess;
     @Mock
     private IOrderRepository orderRepository;
+    @Mock
+    private BeverageQuantityChecker beverageQuantityChecker;
+    @Mock
+    private EmailNotifier emailNotifier;
+
 
     @Test
     public void should_return_instruction_of_tea_when_order_is_tea() {
@@ -225,7 +232,7 @@ public class MachineTranslatorTest {
         machineTranslator.command(coffeeOrder);
 
         //then
-        verify(orderRepository,times(1)).save(coffeeOrder);
+        verify(orderRepository, times(1)).save(coffeeOrder);
 
     }
 
@@ -244,7 +251,33 @@ public class MachineTranslatorTest {
 
     }
 
+    @Test
+    public void should_notify_user_when_shortage_of_liquid() {
+        //given
+        Coffee coffee = new Coffee();
+        Order coffeeOrder = new Order(0, new BigDecimal(1), coffee);
+        when(beverageQuantityChecker.isEmpty(anyString())).thenReturn(true);
 
+        //when
+        machineTranslator.command(coffeeOrder);
 
+        //then
+        verify(emailNotifier, times(1)).notifyMissingDrink(anyString());
+        verify(forewordMessageProcess, times(1)).sendsMsg(" A drink can't be delivered because of a shortage ");
 
+    }
+
+    @Test
+    public void should_not_notify_user_when_shortage_of_liquid() {
+        //given
+        Coffee coffee = new Coffee();
+        Order coffeeOrder = new Order(0, new BigDecimal(1), coffee);
+        when(beverageQuantityChecker.isEmpty(anyString())).thenReturn(false);
+
+        //when
+        machineTranslator.command(coffeeOrder);
+
+        //then
+        verify(emailNotifier, never()).notifyMissingDrink(anyString());
+    }
 }
