@@ -37,6 +37,15 @@ public class DrinkSoldDetailsDto {
     }
 
     @Override
+    public String toString() {
+        return "DrinkSoldDetailsDto{" +
+                "product=" + product +
+                ", quantity=" + quantity +
+                ", amount=" + amount +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(product.getIdentifier());
     }

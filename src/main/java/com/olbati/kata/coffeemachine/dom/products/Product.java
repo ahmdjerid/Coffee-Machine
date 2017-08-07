@@ -25,4 +25,12 @@ public abstract class Product implements IProduct {
         return Objects.hash(getIdentifier());
     }
 
+
+    @Override
+    public String toString() {
+        return "Product{ code: " + getCode() +
+                ", identifier: " + getIdentifier() +
+                " }";
+    }
+
 }

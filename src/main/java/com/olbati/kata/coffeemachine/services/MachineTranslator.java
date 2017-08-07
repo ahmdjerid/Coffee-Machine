@@ -16,6 +16,8 @@ public class MachineTranslator {
 
     private ForewordMessageProcess forewordMessageProcess;
 
+
+
     public MachineTranslator(IOrderRepository orderRepository, ForewordMessageProcess forewordMessageProcess) {
         this.orderRepository = orderRepository;
         this.forewordMessageProcess = forewordMessageProcess;
@@ -63,6 +65,7 @@ public class MachineTranslator {
 
         return amountMoney.compareTo(price) == 1 || amountMoney.compareTo(price) == 0;
     }
+
 
 
     public String sendMessage(String msg) {

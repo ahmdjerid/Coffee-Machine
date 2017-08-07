@@ -7,6 +7,7 @@ import com.olbati.kata.coffeemachine.dom.products.Chocolate;
 import com.olbati.kata.coffeemachine.dom.products.Coffee;
 import com.olbati.kata.coffeemachine.dom.products.Orange;
 import com.olbati.kata.coffeemachine.dom.products.Tea;
+import com.olbati.kata.coffeemachine.services.ConsolePrinter;
 import com.olbati.kata.coffeemachine.services.OrderReport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,7 +68,7 @@ public class ReportTest {
         Order chocolateOrder = new Order(0, new BigDecimal(1), new Chocolate());
         Order orangeOrder = new Order(0, new BigDecimal(1), new Orange());
 
-        when(orderRepository.findOrdersByProduct(new Coffee())).thenReturn( Arrays.asList(coffeeOrder));
+        when(orderRepository.findOrdersByProduct(new Coffee())).thenReturn(Arrays.asList(coffeeOrder));
         when(orderRepository.findOrdersByProduct(new Tea())).thenReturn(Arrays.asList(teaOrder, teaOrder));
         when(orderRepository.findOrdersByProduct(new Chocolate())).thenReturn(Arrays.asList(chocolateOrder, chocolateOrder));
         when(orderRepository.findOrdersByProduct(new Orange())).thenReturn(Arrays.asList(orangeOrder));
@@ -85,5 +86,29 @@ public class ReportTest {
                 new DrinkSoldDetailsDto(new Orange(), 1, new BigDecimal(0.6).setScale(3, BigDecimal.ROUND_HALF_UP)));
 
         //assertThat(details).extracting("quantity", "amount").contains(tuple(2, new BigDecimal(0.6 * 2).setScale(3,BigDecimal.ROUND_HALF_UP)));
+    }
+
+
+    @Test
+    public void should_print_report_details_on_console() {
+        orderReport.printer = new ConsolePrinter();
+        //given
+        when(orderRepository.findProductTypes()).thenReturn(Arrays.asList(new Coffee(), new Tea(), new Chocolate(), new Orange()));
+
+        Order coffeeOrder = new Order(0, new BigDecimal(1), new Coffee());
+        Order teaOrder = new Order(0, new BigDecimal(1), new Tea());
+        Order chocolateOrder = new Order(0, new BigDecimal(1), new Chocolate());
+        Order orangeOrder = new Order(0, new BigDecimal(1), new Orange());
+
+        when(orderRepository.findOrdersByProduct(new Coffee())).thenReturn(Arrays.asList(coffeeOrder));
+        when(orderRepository.findOrdersByProduct(new Tea())).thenReturn(Arrays.asList(teaOrder, teaOrder));
+        when(orderRepository.findOrdersByProduct(new Chocolate())).thenReturn(Arrays.asList(chocolateOrder, chocolateOrder));
+        when(orderRepository.findOrdersByProduct(new Orange())).thenReturn(Arrays.asList(orangeOrder));
+
+
+        //when
+        orderReport.printReport();
+        //then
+
     }
 }

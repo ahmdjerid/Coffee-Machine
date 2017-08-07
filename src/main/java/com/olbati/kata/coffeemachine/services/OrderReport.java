@@ -16,9 +16,11 @@ import java.util.List;
 public class OrderReport implements IOrderReport {
 
     private IOrderRepository orderRepository;
+    public IPrinter printer;
 
-    public OrderReport(IOrderRepository orderRepository) {
+    public OrderReport(IOrderRepository orderRepository, IPrinter printer) {
         this.orderRepository = orderRepository;
+        this.printer = printer;
     }
 
 
@@ -55,4 +57,10 @@ public class OrderReport implements IOrderReport {
         return reportDetails;
 
     }
+
+
+    public void printReport() {
+        printer.print(getReportDetails());
+    }
+
 }
