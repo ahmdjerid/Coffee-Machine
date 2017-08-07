@@ -1,8 +1,9 @@
-package com.olbati.kata.coffeemachine.order;
+package com.olbati.kata.coffeemachine.dom.order;
 
-import com.olbati.kata.coffeemachine.products.IProduct;
+import com.olbati.kata.coffeemachine.dom.products.IProduct;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * @author Ahmed Jerid <ahmed.jerid@olbati.com>
@@ -13,12 +14,13 @@ public class Order {
     public final IProduct product;
     final int sugarQuantity;
     public final BigDecimal amountMoney;
-
+    public LocalDateTime createdDate;
 
     public Order(int sugarQuantity, BigDecimal amountMoney, IProduct product) {
         this.amountMoney = amountMoney;
         this.sugarQuantity = sugarQuantity;
         this.product = product;
+        this.createdDate = LocalDateTime.now();
     }
 
 
@@ -30,4 +32,7 @@ public class Order {
         return amountMoney;
     }
 
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
 }

@@ -1,4 +1,6 @@
-package com.olbati.kata.coffeemachine.products;
+package com.olbati.kata.coffeemachine.dom.products.decorators;
+
+import com.olbati.kata.coffeemachine.dom.products.IProduct;
 
 /**
  * @author Ahmed Jerid <ahmed.jerid@olbati.com>

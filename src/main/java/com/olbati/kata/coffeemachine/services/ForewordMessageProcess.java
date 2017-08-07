@@ -1,4 +1,4 @@
-package com.olbati.kata.coffeemachine;
+package com.olbati.kata.coffeemachine.services;
 
 /**
  * @author Ahmed Jerid <ahmed.jerid@olbati.com>

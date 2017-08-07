@@ -1,7 +1,8 @@
-package com.olbati.kata.coffeemachine;
+package com.olbati.kata.coffeemachine.services;
 
-import com.olbati.kata.coffeemachine.order.Order;
-import com.olbati.kata.coffeemachine.products.IProduct;
+import com.olbati.kata.coffeemachine.repositories.IOrderRepository;
+import com.olbati.kata.coffeemachine.dom.order.Order;
+import com.olbati.kata.coffeemachine.dom.products.IProduct;
 
 import java.math.BigDecimal;
 
@@ -11,12 +12,19 @@ import java.math.BigDecimal;
  */
 public class MachineTranslator {
 
+    private IOrderRepository orderRepository;
 
-    private ForewordMessageProcess forewordMessageProcess = new ForewordMessageProcessImpl();
+    private ForewordMessageProcess forewordMessageProcess;
+
+    public MachineTranslator(IOrderRepository orderRepository, ForewordMessageProcess forewordMessageProcess) {
+        this.orderRepository = orderRepository;
+        this.forewordMessageProcess = forewordMessageProcess;
+    }
 
     public String command(Order order) {
 
         if (isEnoughMoney(order)) {
+            orderRepository.save(order);
             return getInstruction(order.product, order.getSugarQuantity());
 
         } else {

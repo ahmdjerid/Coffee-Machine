@@ -1,6 +1,4 @@
-package com.olbati.kata.coffeemachine;
-
-import com.olbati.kata.coffeemachine.ForewordMessageProcess;
+package com.olbati.kata.coffeemachine.services;
 
 /**
  * @author Ahmed Jerid <ahmed.jerid@olbati.com>

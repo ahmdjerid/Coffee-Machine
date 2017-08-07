@@ -1,4 +1,4 @@
-package com.olbati.kata.coffeemachine.products;
+package com.olbati.kata.coffeemachine.dom.products;
 
 import java.math.BigDecimal;
 
@@ -10,5 +10,9 @@ public interface IProduct {
 
     String getCode();
 
+    String getIdentifier();
+
     BigDecimal getPrice();
+
+   
 }

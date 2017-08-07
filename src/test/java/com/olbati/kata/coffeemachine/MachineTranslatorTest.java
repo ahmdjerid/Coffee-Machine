@@ -1,12 +1,15 @@
 package com.olbati.kata.coffeemachine;
 
 
-import com.olbati.kata.coffeemachine.order.Order;
-import com.olbati.kata.coffeemachine.products.Chocolate;
-import com.olbati.kata.coffeemachine.products.Coffee;
-import com.olbati.kata.coffeemachine.products.Orange;
-import com.olbati.kata.coffeemachine.products.Tea;
-import com.olbati.kata.coffeemachine.products.decorators.HotDecorator;
+import com.olbati.kata.coffeemachine.repositories.IOrderRepository;
+import com.olbati.kata.coffeemachine.dom.order.Order;
+import com.olbati.kata.coffeemachine.dom.products.Chocolate;
+import com.olbati.kata.coffeemachine.dom.products.Coffee;
+import com.olbati.kata.coffeemachine.dom.products.Orange;
+import com.olbati.kata.coffeemachine.dom.products.Tea;
+import com.olbati.kata.coffeemachine.dom.products.decorators.HotDecorator;
+import com.olbati.kata.coffeemachine.services.ForewordMessageProcess;
+import com.olbati.kata.coffeemachine.services.MachineTranslator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -24,11 +27,14 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class MachineTranslatorTest {
 
+
     @InjectMocks
-    private MachineTranslator machineTranslator = new MachineTranslator();
+    private MachineTranslator machineTranslator;
 
     @Mock
     private ForewordMessageProcess forewordMessageProcess;
+    @Mock
+    private IOrderRepository orderRepository;
 
     @Test
     public void should_return_instruction_of_tea_when_order_is_tea() {
@@ -190,13 +196,13 @@ public class MachineTranslatorTest {
         //then
         assertThat(instruction).isEqualTo("O::");
 
-
     }
 
     @Test
     public void should_return_extra_hot_coffee_instruction_when_order_is_extra_hot_coffee() {
         //given
         Coffee coffee = new Coffee();
+
         HotDecorator hotCoffee = new HotDecorator(coffee);
 
         Order CoffeeOrder = new Order(0, new BigDecimal(1), hotCoffee);
@@ -207,6 +213,38 @@ public class MachineTranslatorTest {
         assertThat(instruction).isEqualTo("Ch::");
 
     }
+
+    @Test
+    public void should_save_order_when_successful_purchased() {
+
+        //given
+        Coffee coffee = new Coffee();
+        Order coffeeOrder = new Order(0, new BigDecimal(1), coffee);
+
+        //when
+        machineTranslator.command(coffeeOrder);
+
+        //then
+        verify(orderRepository,times(1)).save(coffeeOrder);
+
+    }
+
+    @Test
+    public void should_ignore_save_order_when_failure_purchased() {
+
+        //given
+        Coffee coffee = new Coffee();
+        Order coffeeOrder = new Order(0, new BigDecimal(0), coffee);
+
+        //when
+        machineTranslator.command(coffeeOrder);
+
+        //then
+        verify(orderRepository, never()).save(coffeeOrder);
+
+    }
+
+
 
 
 }
